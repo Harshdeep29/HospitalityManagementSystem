@@ -10,13 +10,15 @@ public class Reservation {
 
     public Reservation() {}
 
-    public Reservation(int guestId, int roomId, String checkInDate, String checkOutDate, double totalPrice) {
+    public Reservation(int id, int guestId, int roomId, String checkInDate, String checkOutDate, double totalPrice) {
+        this.id = id;
         this.guestId = guestId;
         this.roomId = roomId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.totalPrice = totalPrice;
     }
+
 
     public int getId() {
         return id;
