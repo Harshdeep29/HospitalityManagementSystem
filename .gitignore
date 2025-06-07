@@ -9,3 +9,6 @@
 
 # OS files
 .DS_Store
+
+# Ignore DB credentials
+src/db.properties
