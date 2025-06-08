@@ -12,6 +12,3 @@
 
 # Ignore DB credentials
 src/db.properties
-
-#Ignore resources
-src/resources
