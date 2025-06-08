@@ -1,72 +1,112 @@
 package gui;
 
+import dao.GuestDAO;
+import dao.HotelDAO;
+import dao.ReservationDAO;
+import dao.RoomDAO;
+import model.Guest;
+import model.Hotel;
+import model.Reservation;
+import model.Room;
+
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class RetrieveDataForm extends JFrame {
-    private final MainFrame mainFrame;
-
     public RetrieveDataForm(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
-
         setTitle("Retrieve Data");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(900, 600);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Hotels", createTablePanel(
-                new String[]{"Hotel ID", "Name", "Location"},
-                new Object[][]{
-                        {"H001", "Taj", "Delhi"},
-                        {"H002", "Oberoi", "Mumbai"}
-                }
-        ));
 
-        tabbedPane.addTab("Rooms", createTablePanel(
-                new String[]{"Room ID", "Hotel ID", "Type", "Price", "Status"},
-                new Object[][]{
-                        {"R101", "H001", "Deluxe", "4000", "Available"},
-                        {"R102", "H002", "Standard", "3000", "Booked"}
-                }
-        ));
+        // Hotels Tab
+        tabbedPane.add("Hotels", createHotelTable());
 
-        tabbedPane.addTab("Guests", createTablePanel(
-                new String[]{"Guest ID", "Name", "Email", "Phone"},
-                new Object[][]{
-                        {"G001", "John Doe", "john@example.com", "1234567890"},
-                        {"G002", "Jane Smith", "jane@example.com", "9876543210"}
-                }
-        ));
+        // Guests Tab
+        tabbedPane.add("Guests", createGuestTable());
 
-        tabbedPane.addTab("Reservations", createTablePanel(
-                new String[]{"Reservation ID", "Guest ID", "Room ID", "Check-In", "Check-Out"},
-                new Object[][]{
-                        {"RES001", "G001", "R101", "2024-05-10", "2024-05-12"}
-                }
-        ));
+        // Rooms Tab
+        tabbedPane.add("Rooms", createRoomTable());
+
+        // Reservations Tab
+        tabbedPane.add("Reservations", createReservationTable());
 
         add(tabbedPane, BorderLayout.CENTER);
 
         JButton back = new JButton("Back");
         back.addActionListener(e -> {
             this.dispose();
-            this.mainFrame.setVisible(true);
+            mainFrame.setVisible(true);
         });
 
-        JPanel bottomPanel = new JPanel(new FlowLayout());
-        bottomPanel.add(back);
-        add(bottomPanel, BorderLayout.SOUTH);
+        JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        southPanel.add(back);
+        add(southPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    private JPanel createTablePanel(String[] columns, Object[][] data) {
-        JTable table = new JTable(new DefaultTableModel(data, columns));
-        JScrollPane scrollPane = new JScrollPane(table);
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(scrollPane, BorderLayout.CENTER);
-        return panel;
+    private JScrollPane createHotelTable() {
+        List<Hotel> hotels = new HotelDAO().getAllHotels();
+        String[] cols = {"ID", "Name", "Address", "Amenities", "Phone"};
+        Object[][] data = new Object[hotels.size()][cols.length];
+        for (int i = 0; i < hotels.size(); i++) {
+            Hotel h = hotels.get(i);
+            data[i][0] = h.getId();
+            data[i][1] = h.getName();
+            data[i][2] = h.getAddress();
+            data[i][3] = h.getAmenities();
+            data[i][4] = h.getPhone();
+        }
+        return new JScrollPane(new JTable(data, cols));
+    }
+
+    private JScrollPane createGuestTable() {
+        List<Guest> guests = new GuestDAO().getAllGuests();
+        String[] cols = {"ID", "Name", "Email", "Phone"};
+        Object[][] data = new Object[guests.size()][cols.length];
+        for (int i = 0; i < guests.size(); i++) {
+            Guest g = guests.get(i);
+            data[i][0] = g.getId();
+            data[i][1] = g.getName();
+            data[i][2] = g.getEmail();
+            data[i][3] = g.getPhone();
+        }
+        return new JScrollPane(new JTable(data, cols));
+    }
+
+    private JScrollPane createRoomTable() {
+        List<Room> rooms = new RoomDAO().getAllRooms();
+        String[] cols = {"ID", "Hotel ID", "Room No.", "Type", "Price", "Status"};
+        Object[][] data = new Object[rooms.size()][cols.length];
+        for (int i = 0; i < rooms.size(); i++) {
+            Room r = rooms.get(i);
+            data[i][0] = r.getId();
+            data[i][1] = r.getHotelId();
+            data[i][2] = r.getRoomNumber();
+            data[i][3] = r.getType();
+            data[i][4] = r.getPrice();
+            data[i][5] = r.getStatus();
+        }
+        return new JScrollPane(new JTable(data, cols));
+    }
+
+    private JScrollPane createReservationTable() {
+        List<Reservation> resList = new ReservationDAO().getAllReservations();
+        String[] cols = {"ID", "Guest ID", "Room ID", "Check-In", "Check-Out", "Total Price"};
+        Object[][] data = new Object[resList.size()][cols.length];
+        for (int i = 0; i < resList.size(); i++) {
+            Reservation r = resList.get(i);
+            data[i][0] = r.getId();
+            data[i][1] = r.getGuestId();
+            data[i][2] = r.getRoomId();
+            data[i][3] = r.getCheckInDate();
+            data[i][4] = r.getCheckOutDate();
+            data[i][5] = r.getTotalPrice();
+        }
+        return new JScrollPane(new JTable(data, cols));
     }
 }

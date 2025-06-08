@@ -95,4 +95,27 @@ public class GuestDAO {
             return false;
         }
     }
+
+    public List<Guest> searchGuestsByName(String nameQuery) {
+        List<Guest> guests = new ArrayList<>();
+        String sql = "SELECT * FROM guests WHERE name LIKE ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + nameQuery + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                guests.add(new Guest(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("phone")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching guests: " + e.getMessage());
+        }
+        return guests;
+    }
+
 }

@@ -19,6 +19,13 @@ public class Reservation {
         this.totalPrice = totalPrice;
     }
 
+    public Reservation(int guestId, int roomId, String checkInDate, String checkOutDate, double totalPrice) {
+        this.guestId = guestId;
+        this.roomId = roomId;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.totalPrice = totalPrice;
+    }
 
     public int getId() {
         return id;
