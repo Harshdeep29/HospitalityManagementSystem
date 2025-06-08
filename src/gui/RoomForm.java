@@ -173,7 +173,10 @@ public class RoomForm extends JFrame {
             mainFrame.setVisible(true);
         });
 
-        exit.addActionListener(e -> dispose());
+        exit.addActionListener(e -> {
+            this.dispose();
+            mainFrame.setVisible(true);
+        });
 
         setVisible(true);
     }

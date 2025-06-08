@@ -48,6 +48,7 @@ public class HotelForm extends JFrame {
         });
         exit.addActionListener(e -> {
             System.exit(0);
+            mainFrame.setVisible(true);
         });
 
         //Add Hotel

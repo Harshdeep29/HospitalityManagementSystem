@@ -202,6 +202,7 @@ public class GuestForm extends JFrame {
         });
         exit.addActionListener(e ->{
             dispose();
+            mainFrame.setVisible(true);
         });
 
         setVisible(true);
