@@ -2,16 +2,32 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class MainFrame extends JFrame {
-    public MainFrame() {
-        setTitle("Hotel Reservation System");
+public class AdminFrame extends JFrame {
+    private String username;
+    public AdminFrame(String username) {
+
+        this.username = username;
+
+        setTitle("Admin Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
 
-        JLabel title = new JLabel("Welcome to Hotel Reservation System", JLabel.CENTER);
+        JMenuBar menuBar = new JMenuBar();
+        JMenu accountMenu = new JMenu("Account");
+        JMenuItem logoutItem = new JMenuItem("Logout");
+
+        logoutItem.addActionListener(e -> {
+            dispose(); // close admin frame
+            new LoginForm(); // go back to login
+        });
+
+        accountMenu.add(logoutItem);
+        menuBar.add(accountMenu);
+        setJMenuBar(menuBar);
+
+        JLabel title = new JLabel("Welcome " + username + " to Admin Dashboard", JLabel.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 20));
         add(title, BorderLayout.NORTH);
 
@@ -64,9 +80,5 @@ public class MainFrame extends JFrame {
         add(centerPanel, BorderLayout.CENTER);
 
         setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainFrame::new);
     }
 }

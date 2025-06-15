@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.List;
 
 public class RetrieveDataForm extends JFrame {
-    public RetrieveDataForm(MainFrame mainFrame) {
+    public RetrieveDataForm(AdminFrame adminFrame) {
         setTitle("Retrieve Data");
         setSize(900, 600);
         setLocationRelativeTo(null);
@@ -39,7 +39,7 @@ public class RetrieveDataForm extends JFrame {
         JButton back = new JButton("Back");
         back.addActionListener(e -> {
             this.dispose();
-            mainFrame.setVisible(true);
+            adminFrame.setVisible(true);
         });
 
         JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

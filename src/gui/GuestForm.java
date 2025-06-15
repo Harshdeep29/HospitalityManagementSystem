@@ -8,10 +8,10 @@ import java.awt.*;
 import java.util.List;
 
 public class GuestForm extends JFrame {
-    private final MainFrame mainFrame;
-    public GuestForm(MainFrame mainFrame) {
+    private final JFrame parentFrame;
+    public GuestForm(JFrame parentFrame) {
 
-        this.mainFrame = mainFrame;
+        this.parentFrame = parentFrame;
 
         setTitle("Guest Form");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -196,16 +196,24 @@ public class GuestForm extends JFrame {
             JOptionPane.showMessageDialog(this, scrollPane, "Search Results", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        back.addActionListener(e ->{
+        back.addActionListener(e -> {
             this.dispose();
-            this.mainFrame.setVisible(true);
+            if (parentFrame != null) parentFrame.setVisible(true);
         });
-        exit.addActionListener(e ->{
-            dispose();
-            mainFrame.setVisible(true);
+
+        exit.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Exit the application?", "Confirm", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
         });
+
 
         setVisible(true);
 
+    }
+
+    public GuestForm() {
+        this(null);
     }
 }

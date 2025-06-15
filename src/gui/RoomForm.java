@@ -8,10 +8,10 @@ import java.awt.*;
 import java.util.List;
 
 public class RoomForm extends JFrame {
-    private final MainFrame mainFrame;
+    private final AdminFrame adminFrame;
 
-    public RoomForm(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public RoomForm(AdminFrame adminFrame) {
+        this.adminFrame = adminFrame;
 
         setTitle("Room Form");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -170,12 +170,12 @@ public class RoomForm extends JFrame {
 
         back.addActionListener(e -> {
             this.dispose();
-            mainFrame.setVisible(true);
+            adminFrame.setVisible(true);
         });
 
         exit.addActionListener(e -> {
             this.dispose();
-            mainFrame.setVisible(true);
+            adminFrame.setVisible(true);
         });
 
         setVisible(true);

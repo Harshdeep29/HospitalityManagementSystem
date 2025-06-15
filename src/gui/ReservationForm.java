@@ -8,10 +8,10 @@ import java.awt.*;
 import java.util.List;
 
 public class ReservationForm extends JFrame {
-    private final MainFrame mainFrame;
+    private final AdminFrame adminFrame;
 
-    public ReservationForm(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public ReservationForm(AdminFrame adminFrame) {
+        this.adminFrame = adminFrame;
 
         setTitle("Reservation Form");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -136,14 +136,18 @@ public class ReservationForm extends JFrame {
 
         back.addActionListener(e -> {
             this.dispose();
-            mainFrame.setVisible(true);
+            adminFrame.setVisible(true);
         });
 
         exit.addActionListener(e -> {
             this.dispose();
-            mainFrame.setVisible(true);
+            adminFrame.setVisible(true);
         });
 
         setVisible(true);
+    }
+
+    public ReservationForm() {
+        this(null);
     }
 }

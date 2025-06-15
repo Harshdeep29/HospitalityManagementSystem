@@ -8,10 +8,10 @@ import java.awt.*;
 import java.util.List;
 
 public class HotelForm extends JFrame {
-    private final MainFrame mainFrame;
-    public HotelForm(MainFrame mainFrame) {
+    private final AdminFrame adminFrame;
+    public HotelForm(AdminFrame adminFrame) {
 
-        this.mainFrame = mainFrame;
+        this.adminFrame = adminFrame;
 
         setTitle("Hotel Form");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,11 +44,11 @@ public class HotelForm extends JFrame {
 
         back.addActionListener(e -> {
             this.dispose();
-            this.mainFrame.setVisible(true);
+            this.adminFrame.setVisible(true);
         });
         exit.addActionListener(e -> {
             System.exit(0);
-            mainFrame.setVisible(true);
+            adminFrame.setVisible(true);
         });
 
         //Add Hotel
