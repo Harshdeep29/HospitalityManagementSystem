@@ -178,8 +178,16 @@ public class HotelForm extends JFrame {
                 int id = Integer.parseInt(inputId);
                 HotelDAO dao = new HotelDAO();
                 boolean deleted = dao.deleteHotel(id);
-                JOptionPane.showMessageDialog(this, deleted ? "🗑️ Hotel deleted." : "❌ Hotel not found or deletion failed.");
-
+                if (deleted) {
+                    JOptionPane.showMessageDialog(this, "🗑️ Hotel deleted.");
+                } else {
+                    // Check for the specific error reason
+                    if (new dao.RoomDAO().hasRooms(id)) {
+                        JOptionPane.showMessageDialog(this, "❌ Cannot delete. This hotel has associated rooms.");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "❌ Hotel not found or deletion failed.");
+                    }
+                }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Invalid ID entered.");
             }

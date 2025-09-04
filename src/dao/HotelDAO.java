@@ -2,6 +2,7 @@ package dao;
 
 import model.Hotel;
 import db.DatabaseConnector;
+import dao.RoomDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -89,12 +90,17 @@ public class HotelDAO {
     }
     //Delete Hotel
     public boolean deleteHotel(int id) {
+        RoomDAO dao = new RoomDAO();
+            if(dao.hasRooms(id)){
+                System.out.println("Cannot delete hotel with ID"+ id + ". It has associated rooms.");
+                return false;
+            }
         String sql = "delete from hotels where id = ?";
         try(Connection conn = DatabaseConnector.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, id);
-            int rowsDeleted = stmt.executeUpdate();
-            return rowsDeleted > 0;
+                int rowsDeleted = stmt.executeUpdate();
+                return rowsDeleted > 0;
         }catch(SQLException e){
             System.out.println("Error deleting hotel: " + e.getMessage());
             return false;

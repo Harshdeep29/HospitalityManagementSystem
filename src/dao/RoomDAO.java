@@ -117,4 +117,19 @@ public class RoomDAO {
             return false;
         }
     }
+
+    public boolean hasRooms(int id){
+        String sql = "SELECT * FROM rooms WHERE hotel_id = ?";
+        try(Connection conn = DatabaseConnector.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching rooms: " + e.getMessage());
+        }
+        return false;
+    }
 }

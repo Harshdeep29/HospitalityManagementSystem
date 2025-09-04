@@ -100,9 +100,7 @@ public class ReservationDAO {
     // Check Room Availability
     public boolean isRoomAvailable(int roomId, String checkIn, String checkOut) {
         String sql = """
-            SELECT COUNT(*) FROM reservations 
-            WHERE room_id = ? AND 
-            (check_in_date < ? AND check_out_date > ?)
+            SELECT COUNT(*) FROM reservations WHERE room_id = ? AND NOT (check_out_date <= ? OR check_in_date >= ?)
             """;
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

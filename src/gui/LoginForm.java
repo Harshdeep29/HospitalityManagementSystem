@@ -7,11 +7,13 @@ import model.User;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class LoginForm extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private JButton signUpButton;
 
     public LoginForm() {
         setTitle("Login");
@@ -31,13 +33,17 @@ public class LoginForm extends JFrame {
         panel.add(passwordField);
 
         loginButton = new JButton("Login");
+        signUpButton = new JButton("Sign Up");
         panel.add(loginButton);
+        panel.add(signUpButton);
 
         add(panel);
         setVisible(true);
 
         // Action
         loginButton.addActionListener(e -> attemptLogin());
+
+        signUpButton.addActionListener(e -> attemptSignup());
     }
 
     private void attemptLogin() {
@@ -64,6 +70,49 @@ public class LoginForm extends JFrame {
             ex.printStackTrace();
         }
     }
+
+    private void attemptSignup() {
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        String[] roles = {"admin", "reception"};
+        JComboBox<String> roleDropdown = new JComboBox<>(roles);
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("Username:"));
+        panel.add(usernameField);
+        panel.add(new JLabel("Password:"));
+        panel.add(passwordField);
+        panel.add(new JLabel("Role:"));
+        panel.add(roleDropdown);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "Sign up", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword());
+            String role = roleDropdown.getSelectedItem().toString();
+
+            if(username == null || password == null) {
+                JOptionPane.showMessageDialog(this, "Username and password are required", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            try{
+                User newUser = new User(username, password, role);
+                UserDAO userDAO = new UserDAO(DatabaseConnector.getConnection());
+                boolean success = userDAO.addUser(newUser);
+
+                if (success) {
+                    JOptionPane.showMessageDialog(this, "New user "+username+" successfully added as " + newUser.getRole());
+                    dispose();
+                }
+                else {
+                    JOptionPane.showMessageDialog(this, "Failed to create user, Username may already exist.");
+                }
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(this, "Error occured while trying to save the user");
+            }
+        }
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginForm());
     }
