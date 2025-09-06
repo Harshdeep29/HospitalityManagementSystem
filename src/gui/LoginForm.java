@@ -102,7 +102,6 @@ public class LoginForm extends JFrame {
 
                 if (success) {
                     JOptionPane.showMessageDialog(this, "New user "+username+" successfully added as " + newUser.getRole());
-                    dispose();
                 }
                 else {
                     JOptionPane.showMessageDialog(this, "Failed to create user, Username may already exist.");

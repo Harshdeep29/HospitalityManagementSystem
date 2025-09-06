@@ -5,9 +5,13 @@ import model.Hotel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HotelForm extends JFrame {
+    private final String[] AMENITIES_OPTIONS = {"Wi-Fi", "Parking", "Pool", "Gym", "Restaurant", "Spa"};
+    private final JCheckBox[] amenitiesCheckBoxes = new JCheckBox[AMENITIES_OPTIONS.length];
     private final AdminFrame adminFrame;
     public HotelForm(AdminFrame adminFrame) {
 
@@ -55,13 +59,13 @@ public class HotelForm extends JFrame {
         addHotel.addActionListener(e -> {
             JTextField nameField = new JTextField();
             JTextField addressField = new JTextField();
-            JTextField amenitiesField = new JTextField();
             JTextField phoneField = new JTextField();
-            Dimension fieldSize = new Dimension(200, 25);
-            nameField.setPreferredSize(fieldSize);
-            addressField.setPreferredSize(fieldSize);
-            amenitiesField.setPreferredSize(fieldSize);
-            phoneField.setPreferredSize(fieldSize);
+
+            JPanel amenitiesPanel = new JPanel(new GridLayout(0, 2));
+            for (int i = 0; i < AMENITIES_OPTIONS.length; i++) {
+                amenitiesCheckBoxes[i] = new JCheckBox(AMENITIES_OPTIONS[i]);
+                amenitiesPanel.add(amenitiesCheckBoxes[i]);
+            }
 
             JPanel inputPanel = new JPanel(new GridLayout(4,2));
             inputPanel.setBorder(BorderFactory.createEmptyBorder(20,100,20,100));
@@ -69,17 +73,24 @@ public class HotelForm extends JFrame {
             inputPanel.add(nameField);
             inputPanel.add(new JLabel("Address:"));
             inputPanel.add(addressField);
-            inputPanel.add(new JLabel("Amenities:"));
-            inputPanel.add(amenitiesField);
             inputPanel.add(new JLabel("Phone:"));
             inputPanel.add(phoneField);
+            inputPanel.add(new JLabel("Amenities:"));
+            inputPanel.add(amenitiesPanel);
 
             int result = JOptionPane.showConfirmDialog(null, inputPanel, "Enter Hotel Details", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 String name = nameField.getText().trim();
                 String address = addressField.getText().trim();
-                String amenities = amenitiesField.getText().trim();
                 String phone = phoneField.getText().trim();
+
+                List<String> selectedAmenities = new ArrayList<>();
+                for (JCheckBox checkBox : amenitiesCheckBoxes) {
+                    if (checkBox.isSelected()) {
+                        selectedAmenities.add(checkBox.getText());
+                    }
+                }
+                String amenities = String.join(", ", selectedAmenities);
 
                 if (name.isEmpty() || address.isEmpty() || amenities.isEmpty() || phone.isEmpty()) {
                     JOptionPane.showMessageDialog(this, "All fields are required.");
@@ -121,49 +132,64 @@ public class HotelForm extends JFrame {
 
         //Edit Hotel by ID
         editHotel.addActionListener(e -> {
-           String inputID = JOptionPane.showInputDialog(this,"Enter Hotel ID to edit:");
-           if(inputID == null || inputID.equals("")) {
-               JOptionPane.showMessageDialog(this, "Please enter a valid Hotel ID.");
-               return;
-           }
-           try{
-               int hotelID = Integer.parseInt(inputID);
-               HotelDAO dao = new HotelDAO();
-               Hotel hotel = dao.getHotelById(hotelID);
-               if(hotel == null) {
-                   JOptionPane.showMessageDialog(this, "Hotel does not exist.");
-                   return;
-               }
+            String inputID = JOptionPane.showInputDialog(this, "Enter Hotel ID to edit:");
+            if (inputID == null || inputID.equals("")) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid Hotel ID.");
+                return;
+            }
+            try {
+                int hotelID = Integer.parseInt(inputID);
+                HotelDAO dao = new HotelDAO();
+                Hotel hotel = dao.getHotelById(hotelID);
+                if (hotel == null) {
+                    JOptionPane.showMessageDialog(this, "Hotel does not exist.");
+                    return;
+                }
 
-               JTextField nameField = new JTextField(hotel.getName());
-               JTextField addressField = new JTextField(hotel.getAddress());
-               JTextField amenitiesField = new JTextField(hotel.getAmenities());
-               JTextField phoneField = new JTextField(hotel.getPhone());
+                JTextField nameField = new JTextField(hotel.getName());
+                JTextField addressField = new JTextField(hotel.getAddress());
+                JTextField phoneField = new JTextField(hotel.getPhone());
 
-               JPanel inputPanel = new JPanel(new GridLayout(4,2));
-               inputPanel.setBorder(BorderFactory.createEmptyBorder(20,100,20,100));
-               inputPanel.add(new JLabel("Name:"));
-               inputPanel.add(nameField);
-               inputPanel.add(new JLabel("Address:"));
-               inputPanel.add(addressField);
-               inputPanel.add(new JLabel("Amenities:"));
-               inputPanel.add(amenitiesField);
-               inputPanel.add(new JLabel("Phone:"));
-               inputPanel.add(phoneField);
+                // Amenities logic for edit
+                JPanel amenitiesPanel = new JPanel(new GridLayout(0, 2));
+                List<String> currentAmenities = Arrays.asList(hotel.getAmenities().split(", "));
+                for (int i = 0; i < AMENITIES_OPTIONS.length; i++) {
+                    JCheckBox checkBox = new JCheckBox(AMENITIES_OPTIONS[i], currentAmenities.contains(AMENITIES_OPTIONS[i]));
+                    amenitiesCheckBoxes[i] = checkBox; // Reuse the array to check for selected options
+                    amenitiesPanel.add(checkBox);
+                }
 
-               int result = JOptionPane.showConfirmDialog(this, inputPanel, "Edit Hotel Details", JOptionPane.OK_CANCEL_OPTION);
-               if (result == JOptionPane.OK_OPTION) {
-                   hotel.setName(nameField.getText());
-                   hotel.setAddress(addressField.getText());
-                   hotel.setAmenities(amenitiesField.getText());
-                   hotel.setPhone(phoneField.getText());
+                JPanel inputPanel = new JPanel(new GridLayout(4, 2));
+                inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+                inputPanel.add(new JLabel("Name:"));
+                inputPanel.add(nameField);
+                inputPanel.add(new JLabel("Address:"));
+                inputPanel.add(addressField);
+                inputPanel.add(new JLabel("Phone:"));
+                inputPanel.add(phoneField);
+                inputPanel.add(new JLabel("Amenities:"));
+                inputPanel.add(amenitiesPanel);
 
-                   boolean success = dao.updateHotel(hotel);
-                   JOptionPane.showMessageDialog(this, success ? "<UNK> Hotel updated!" : "<UNK> Failed to update hotel.");
-               }
-           }catch(NumberFormatException nfe){
-               JOptionPane.showMessageDialog(this, "Please enter a valid Hotel ID.");
-           }
+                int result = JOptionPane.showConfirmDialog(this, inputPanel, "Edit Hotel Details", JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
+                    hotel.setName(nameField.getText());
+                    hotel.setAddress(addressField.getText());
+                    hotel.setPhone(phoneField.getText());
+
+                    List<String> selectedAmenities = new ArrayList<>();
+                    for (JCheckBox checkBox : amenitiesCheckBoxes) {
+                        if (checkBox.isSelected()) {
+                            selectedAmenities.add(checkBox.getText());
+                        }
+                    }
+                    hotel.setAmenities(String.join(", ", selectedAmenities));
+
+                    boolean success = dao.updateHotel(hotel);
+                    JOptionPane.showMessageDialog(this, success ? "✅ Hotel updated!" : "❌ Failed to update hotel.");
+                }
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid Hotel ID.");
+            }
         });
 
         // Delete Hotel by ID
